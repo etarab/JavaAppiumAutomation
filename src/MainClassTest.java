@@ -12,5 +12,12 @@ public class MainClassTest extends MainClass {
         }
     }
 
-
+    @Test
+    public void testGetClassNumber(){
+        if (this.getClassNumber() > 45){
+            System.out.println(this.getClassNumber() + " over than 45");
+        } else {
+            Assert.fail(this.getClassNumber() + " less or equals 45");
+        }
+    }
 }
