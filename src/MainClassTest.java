@@ -6,18 +6,27 @@ public class MainClassTest extends MainClass {
     public void testGetLocalNumber(){
 
         if (this.getLocalNumber()==14){
-            System.out.println(this.getLocalNumber() + " is expected value");
+            System.out.println(getLocalNumber() + " is expected value");
         } else {
-            Assert.assertEquals("getLocalNumber() contains unexpected value",14, this.getLocalNumber());
+            Assert.assertEquals("getLocalNumber() contains unexpected value",14, getLocalNumber());
         }
     }
 
     @Test
     public void testGetClassNumber(){
-        if (this.getClassNumber() > 45){
-            System.out.println(this.getClassNumber() + " over than 45");
+        if (getClassNumber() > 45){
+            System.out.println(getClassNumber() + " over than 45");
         } else {
-            Assert.fail(this.getClassNumber() + " less or equals 45");
+            Assert.fail(getClassNumber() + " less or equals 45");
+        }
+    }
+
+    @Test
+    public void testGetClassString(){
+        if (getClassString().contains("Hello") || getClassString().contains("hello")){
+            System.out.println("\""+getClassString()+"\"" + " contains expected substring");
+        } else {
+            Assert.fail("\""+getClassString()+"\""  + " not contains expected substring");
         }
     }
 }
