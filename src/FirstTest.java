@@ -70,8 +70,6 @@ public class FirstTest {
     @Test
     public void clearSearch(){
 
-
-
         waitForElementAndClick(
                 By.xpath(this.skip_button),
                 "Can't find SKIP button on start screen");
@@ -85,14 +83,10 @@ public class FirstTest {
                 "Appium");
 
 
-
         // проверрка, что результат поиска не пустой
         waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
                 "Search results not found");
 
-        // если есть android.view.ViewGroup с индексом 2, то в результатах как минимум 2 статьи
-        waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/search_results_list']/android.view.ViewGroup[2]"),
-                "Just one element on search result");
 
         checkCountElementsOnScreen(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
                 "Just one element on screen",
