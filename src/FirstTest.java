@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -82,6 +83,9 @@ public class FirstTest {
                 By.id(search_field_id),
                 "Can't find search field",
                 "Appium");
+
+
+
         // проверрка, что результат поиска не пустой
         waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
                 "Search results not found");
@@ -90,6 +94,11 @@ public class FirstTest {
         waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/search_results_list']/android.view.ViewGroup[2]"),
                 "Just one element on search result");
 
+        checkCountElementsOnScreen(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                "Just one element on screen",
+                1);
+
+
         waitForElementAndClear(
                 By.id(search_field_id),
                 "can't find search field");
@@ -97,10 +106,15 @@ public class FirstTest {
         assertElementHasText(By.id(search_field_id),
                 "Search field clearing is not works",
                 "Search Wikipedia");
+
+
     }
 
 
-
+    private void checkCountElementsOnScreen(By by, String error_message, int expected_count) {
+        int count_elements = driver.findElements(by).size();
+        Assert.assertTrue(error_message, count_elements>expected_count);
+    }
 
 
     private void assertElementHasText(By by, String error_message, String expected_text){
