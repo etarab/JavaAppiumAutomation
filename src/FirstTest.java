@@ -82,16 +82,13 @@ public class FirstTest {
                 "Can't find search field",
                 "Appium");
 
-
         // проверрка, что результат поиска не пустой
         waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
                 "Search results not found");
 
-
         checkCountElementsOnScreen(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
                 "Just one element on screen",
                 1);
-
 
         waitForElementAndClear(
                 By.id(search_field_id),
@@ -104,6 +101,41 @@ public class FirstTest {
 
     }
 
+    @Test
+    public void checkSearchResultsTitles(){
+
+        String search_word = "Appium";
+
+        waitForElementAndClick(
+                By.xpath(this.skip_button),
+                "Can't find SKIP button on start screen");
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Can't find 'Search Wikipedia' field");
+
+        waitForElementAndSendKeys(
+                By.id(search_field_id),
+                "Can't find search field",
+                search_word);
+        waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                "Can't find some result elements");
+
+        int count_elements = driver.findElements(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']")).size();
+
+        for (int i = 1; i <= count_elements; i++) {
+
+            String k = Integer.toString(i);
+            String xpath = "//*[@resource-id = 'org.wikipedia:id/search_results_list']/android.view.ViewGroup["+k+"]//*[@resource-id = 'org.wikipedia:id/page_list_item_title']";
+            WebElement title_element = waitForElementPresent(By.xpath(xpath),
+                    "Can't find title element for compare strings");
+            String result_title = title_element.getAttribute("text");
+            Assert.assertTrue("'"+result_title+"' not contain searching word '"+search_word+"'",
+                    result_title.contains(search_word));
+
+        }
+
+    }
 
     private void checkCountElementsOnScreen(By by, String error_message, int expected_count) {
         int count_elements = driver.findElements(by).size();
