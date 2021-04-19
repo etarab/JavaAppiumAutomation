@@ -13,10 +13,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -39,13 +36,11 @@ public class FirstTest extends ActionsHelper{
         capabilities.setCapability("appActivity", ".main.MainActivity");
         capabilities.setCapability("app", "/Users/etarabuhin/Documents/JavaAppiumAutomationHomework/apks/org.wikipedia.apk");
         ActionsHelper.driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
-
-
     }
 
     @After
     public void tearDown() {
-        this.driver.quit();
+        driver.quit();
     }
 
     @Test
@@ -241,6 +236,27 @@ public class FirstTest extends ActionsHelper{
                 "Cannot find existing article");
         assertElementPresent(By.xpath(title));
 
+    }
+
+    @Test
+    public void checkTitleAfterRotation(){
+        skipFirstScreen();
+        searchArticle("Java");
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Java (programming language)')]"),
+                "Cannot find existing article");
+        String title_before_rotation = waitForElementAndGetAttribute(By.xpath("//*[@resource-id='pcs']/android.view.View[1]/android.view.View[1]"),
+                "text",
+                "Cannot take title by attribute",
+                15);
+        driver.rotate(ScreenOrientation.LANDSCAPE);
+        waitForElementPresent(By.xpath("//*[@resource-id='pcs']/android.view.View[1]/android.view.View[1]"),
+                "test",
+                20);
+        String title_after_rotation = waitForElementAndGetAttribute(By.xpath("//*[@resource-id='pcs']/android.view.View[1]/android.view.View[1]"),
+                "text",
+                "Cannot take title by attribute",
+                15);
+        Assert.assertEquals("Titles not equals",title_before_rotation, title_after_rotation);
     }
 
     private void addingToReadingList(long timeOut){

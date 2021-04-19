@@ -94,5 +94,8 @@ public class ActionsHelper {
     public void assertElementPresent(By by){
         Assert.assertTrue("Cannot find element '"+by.toString()+"' on screen",countElementOnScreen(by)>0);
     }
+    public String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeOut){
+        return waitForElementPresent(by, error_message, timeOut).getAttribute(attribute);
+    }
 
 }
