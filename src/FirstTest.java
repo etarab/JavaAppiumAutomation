@@ -124,9 +124,7 @@ public class FirstTest extends ActionsHelper{
         waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
                 "Can't find some result elements");
 
-        int count_elements = driver.findElements(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']")).size();
-
-        for (int i = 1; i <= count_elements; i++) {
+        for (int i = 1; i <= countElementOnScreen(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']")); i++) {
 
             String k = Integer.toString(i);
             String xpath = "//*[@resource-id = 'org.wikipedia:id/search_results_list']/android.view.ViewGroup["+k+"]//*[@resource-id = 'org.wikipedia:id/page_list_item_title']";
@@ -210,10 +208,8 @@ public class FirstTest extends ActionsHelper{
         swipeElementLeft(By.xpath("//*[contains(@text,'" + articleTitle[deletingElement] + "')]"),
                 "Can't find some element for delete",
                 1000);
-        int count_elements = driver.findElements(By.id("org.wikipedia:id/page_list_item_title")).size();
 
-
-        for (int i = 0; i < count_elements; i++) {
+        for (int i = 0; i < countElementOnScreen(By.id("org.wikipedia:id/page_list_item_title")); i++) {
 
             String title = "";
             WebElement title_element = waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title']["+(i+1)+"]"),
@@ -235,6 +231,18 @@ public class FirstTest extends ActionsHelper{
 
     }
 
+    @Test
+    public void checkArticleTitleExist(){
+        String title = "//*[@resource-id='pcs']/android.view.View[1]/android.view.View[1]";
+
+        skipFirstScreen();
+        searchArticle("java");
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Java (programming language)')]"),
+                "Cannot find existing article");
+        assertElementPresent(By.xpath(title));
+
+    }
+
     private void addingToReadingList(long timeOut){
         waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/article_menu_bookmark'][contains(@text,'Save')]"),
                 "shit happens",
@@ -244,7 +252,6 @@ public class FirstTest extends ActionsHelper{
 
 
     }
-
     private void searchArticle(String searchingWord){
         waitForElementPresent(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 "Can't find 'Search Wikipedia' field",

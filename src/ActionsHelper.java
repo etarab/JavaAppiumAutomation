@@ -16,8 +16,6 @@ public class ActionsHelper {
         int count_elements = driver.findElements(by).size();
         Assert.assertTrue(error_message, count_elements>expected_count);
     }
-
-
     public void assertElementHasText(By by, String error_message, String expected_text){
         WebElement title_element = waitForElementPresent(by, error_message);
         String title_text = title_element.getAttribute("text");
@@ -25,7 +23,6 @@ public class ActionsHelper {
                 expected_text,
                 title_text);
     };
-
     public void waitForElementAndClear(By by, String error_message, long timeOut){
         WebElement element = waitForElementPresent(by, error_message, timeOut);
         element.clear();
@@ -61,7 +58,6 @@ public class ActionsHelper {
                 ExpectedConditions.presenceOfElementLocated(by)
         );
     }
-
     protected void swipeScreenUp(int timeOfSwipe){
         TouchAction action = new TouchAction(driver);
 
@@ -92,4 +88,11 @@ public class ActionsHelper {
 
 
     }
+    public int countElementOnScreen(By by){
+        return (driver.findElements(by).size());
+    }
+    public void assertElementPresent(By by){
+        Assert.assertTrue("Cannot find element '"+by.toString()+"' on screen",countElementOnScreen(by)>0);
+    }
+
 }
