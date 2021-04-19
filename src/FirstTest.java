@@ -4,7 +4,10 @@
 //
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+
+import java.lang.reflect.Array;
 import java.net.URL;
 import org.junit.After;
 import org.junit.Assert;
@@ -12,13 +15,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class FirstTest {
-    private AppiumDriver driver;
+
+public class FirstTest extends ActionsHelper{
+
 
     String skip_button = "//*[contains(@text,'SKIP')]";
     String search_field_id = "org.wikipedia:id/search_src_text";
@@ -33,7 +38,7 @@ public class FirstTest {
         capabilities.setCapability("appPackage", "org.wikipedia");
         capabilities.setCapability("appActivity", ".main.MainActivity");
         capabilities.setCapability("app", "/Users/etarabuhin/Documents/JavaAppiumAutomationHomework/apks/org.wikipedia.apk");
-        this.driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        ActionsHelper.driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
 
     }
@@ -104,11 +109,9 @@ public class FirstTest {
     @Test
     public void checkSearchResultsTitles(){
 
-        String search_word = "Appium";
+        String searchWord = "Java";
 
-        waitForElementAndClick(
-                By.xpath(this.skip_button),
-                "Can't find SKIP button on start screen");
+        skipFirstScreen();
 
         waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
@@ -117,7 +120,7 @@ public class FirstTest {
         waitForElementAndSendKeys(
                 By.id(search_field_id),
                 "Can't find search field",
-                search_word);
+                searchWord);
         waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
                 "Can't find some result elements");
 
@@ -130,49 +133,139 @@ public class FirstTest {
             WebElement title_element = waitForElementPresent(By.xpath(xpath),
                     "Can't find title element for compare strings");
             String result_title = title_element.getAttribute("text");
-            Assert.assertTrue("'"+result_title+"' not contain searching word '"+search_word+"'",
-                    result_title.contains(search_word));
+            Assert.assertTrue("'"+result_title+"' not contain searching word '"+searchWord+"'",
+                    result_title.contains(searchWord));
 
         }
 
     }
 
-    private void checkCountElementsOnScreen(By by, String error_message, int expected_count) {
-        int count_elements = driver.findElements(by).size();
-        Assert.assertTrue(error_message, count_elements>expected_count);
+    @Test
+    public void checkSwipeAction(){
+
+        String searchWord = "Java";
+
+        waitForElementAndClick(
+                By.xpath(this.skip_button),
+                "Can't find SKIP button on start screen");
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Can't find 'Search Wikipedia' field");
+
+        waitForElementAndSendKeys(
+                By.id(search_field_id),
+                "Can't find search field",
+                searchWord);
+        waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                "Can't find some result elements");
+
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Java (programming language)')]"),
+                "Can't find Java page");
+        swipeScreenUp(2000);
+        swipeScreenUp(2000);
     }
 
+    @Test
+    public void addAndDeleteItemsToReadingList(){
 
-    private void assertElementHasText(By by, String error_message, String expected_text){
-        WebElement title_element = waitForElementPresent(by, error_message);
-        String title_text = title_element.getAttribute("text");
-//        System.out.println(title_text);
-        Assert.assertEquals(error_message,
-                expected_text,
-                title_text);
-    };
+        String[] searchLang = new String[]{"Java","Python"};
+        final String readingListName = "Test list";
+        String[] articleTitle = new String[searchLang.length];
+        int deletingElement = 0;
 
-    private void waitForElementAndClear(By by, String error_message){
-        WebElement element = waitForElementPresent(by, error_message);
-        element.clear();
-    };
-    private void waitForElementAndSendKeys(By by, String error_message, String value){
-        WebElement element = waitForElementPresent(by, error_message);
-        element.sendKeys(value);
-    };
-    private void waitForElementAndClick(By by, String error_message){
-        WebElement element = waitForElementPresent(by, error_message);
-        element.click();
-    };
-    private WebElement waitForElementPresent(By by, String error_message){
-        return waitForElementPresent(by, error_message, 5);
-    };
-    private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds ){
-        WebDriverWait wait = new WebDriverWait(driver,timeoutInSeconds);
-        wait.withMessage(error_message + "\n");
+        skipFirstScreen();
 
-        return wait.until(
-                ExpectedConditions.presenceOfElementLocated(by)
-        );
+        for (int i = 0; i < searchLang.length; i++) {
+            searchArticle(searchLang[i]);
+            WebElement titleElement = waitForElementPresent(By.xpath("//*[contains(@text,'"+searchLang[i]+" (programming language)')]"),
+                    "Can't find "+ searchLang[i] +" page");
+            String titleText = titleElement.getAttribute("text");
+            articleTitle[i] = titleText;
+            waitForElementAndClick(By.xpath("//*[contains(@text,'"+searchLang[i]+" (programming language)')]"),
+                    "Can't find "+ searchLang[i] +" page");
+            addingToReadingList(10);
+        }
+        waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/page_toolbar_button_show_overflow_menu']"),
+                "Can't find three dots",
+                10);
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_toolbar_button_show_overflow_menu']"),
+                "Can't find three dots");
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/overflow_feed']"),
+                "Can't find Explore button");
+        waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/smallLabel'][contains(@text,'Saved')]"),
+                "you know",
+                10);
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/smallLabel'][contains(@text,'Saved')]"),
+                "Can't find way to saved articles");
+        waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/item_title'][contains(@text,'Saved')]"),
+                "Can't find expected reading list",
+                10);
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/item_title'][contains(@text,'Saved')]"),
+                "Can't find expected reading list");
+        waitForElementPresent(By.xpath("//*[contains(@text,'" + articleTitle[deletingElement] + "')]"),
+                "Can't find some element for delete",
+                20);
+
+        swipeElementLeft(By.xpath("//*[contains(@text,'" + articleTitle[deletingElement] + "')]"),
+                "Can't find some element for delete",
+                1000);
+        int count_elements = driver.findElements(By.id("org.wikipedia:id/page_list_item_title")).size();
+
+
+        for (int i = 0; i < count_elements; i++) {
+
+            String title = "";
+            WebElement title_element = waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title']["+(i+1)+"]"),
+                    "Can't find element from reading list",
+                    15);
+            title = title_element.getAttribute("text");
+            System.out.println(title);
+
+            if (i != deletingElement){
+                Assert.assertEquals(articleTitle[i],title);
+                System.out.println(articleTitle[i]);
+            }else{
+                Assert.assertNotEquals(articleTitle[i] + " was delete",
+                        title,
+                        articleTitle[i]);
+            }
+        }
+
+
+    }
+
+    private void addingToReadingList(long timeOut){
+        waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/article_menu_bookmark'][contains(@text,'Save')]"),
+                "shit happens",
+                timeOut);
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/article_menu_bookmark'][contains(@text,'Save')]"),
+                "Can't find save article button");
+
+
+    }
+
+    private void searchArticle(String searchingWord){
+        waitForElementPresent(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Can't find 'Search Wikipedia' field",
+                15);
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Can't find 'Search Wikipedia' field");
+        //ввести в поле поиска слово
+        waitForElementPresent(By.id(search_field_id),
+                "Can't find search field",
+                15);
+        waitForElementAndSendKeys(
+                By.id(search_field_id),
+                "Can't find search field",
+                searchingWord);
+        waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                "Can't find some result elements");
+    }
+    private void skipFirstScreen(){
+        waitForElementAndClick(
+                By.xpath(skip_button),
+                "Can't find SKIP button on start screen");
     }
 }
