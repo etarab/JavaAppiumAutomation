@@ -40,6 +40,7 @@ public class FirstTest extends ActionsHelper{
 
     @After
     public void tearDown() {
+        driver.rotate(ScreenOrientation.PORTRAIT);
         driver.quit();
     }
 
