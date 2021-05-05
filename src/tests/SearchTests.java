@@ -2,16 +2,16 @@ package tests;
 
 import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
-import lib.ui.StartPageObject;
+import lib.ui.WelcomePageObject;
 import org.junit.Test;
 
 public class SearchTests extends CoreTestCase {
     @Test
     public void testCompareText(){
 
-        StartPageObject StartPageObject = new StartPageObject(driver);
-        StartPageObject.checkAnnotationText();
-        StartPageObject.skipFirstScreen();
+        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject.checkAnnotationText();
+        WelcomePageObject.skipFirstScreen();
 
         SearchPageObject SearchPageObject = new SearchPageObject(driver);
         SearchPageObject.initSearchInput();
@@ -22,8 +22,8 @@ public class SearchTests extends CoreTestCase {
     public void testClearSearch(){
         String searchWord = "Appium";
 
-        StartPageObject StartPageObject = new StartPageObject(driver);
-        StartPageObject.skipFirstScreen();
+        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject.skipFirstScreen();
         SearchPageObject SearchPageObject = new SearchPageObject(driver);
         SearchPageObject.searchArticle(searchWord);
         SearchPageObject.checkMoreThanOneElementsOnResult();
@@ -36,8 +36,8 @@ public class SearchTests extends CoreTestCase {
     public void testCheckSearchResultsTitles(){
         String searchWord = "Java";
 
-        StartPageObject StartPageObject = new StartPageObject(driver);
-        StartPageObject.skipFirstScreen();
+        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject.skipFirstScreen();
         SearchPageObject SearchPageObject = new SearchPageObject(driver);
         SearchPageObject.searchArticle(searchWord);
         int amount_search_results = SearchPageObject.countSearchResultsOnScreen();
@@ -53,8 +53,8 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testSearch(){
         String searchWord = "Java";
-        StartPageObject StartPageObject = new StartPageObject(driver);
-        StartPageObject.skipFirstScreen();
+        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject.skipFirstScreen();
         SearchPageObject SearchPageObject = new SearchPageObject(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchWord);

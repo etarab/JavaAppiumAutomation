@@ -13,8 +13,8 @@ public class MyListsTest extends CoreTestCase {
         String[] articleTitle = new String[searchLang.length];
         int deletingElement = 0;
 
-        StartPageObject StartPageObject = new StartPageObject(driver);
-        StartPageObject.skipFirstScreen();
+        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject.skipFirstScreen();
         NavigationUI NavigationUI = new NavigationUI(driver);
 
         for (int i = 0; i < searchLang.length; i++) {
