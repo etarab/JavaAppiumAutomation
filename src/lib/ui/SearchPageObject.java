@@ -13,7 +13,9 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_INPUT = "id:org.wikipedia:id/search_src_text",
             SEARCH_RESULT_BY_SUBSTRING_TPL = "xpath://*[contains(@text,'{SUBSTRING}]')]",
             SEARCH_PLACE_HOLDER = "Search Wikipedia",
-            ARTICLE_TITLE_RESULT_TPL = "xpath://*[contains(@text,'{SEARCHLANG} (programming language)')]";
+            ARTICLE_TITLE_RESULT_TPL = "xpath://*[contains(@text,'{SEARCHLANG} (programming language)')]",
+            ARTICLE_TITLE_DESCRIPTION_RESULT_TPL = "xpath://*[@text = '{TITLE}']/following-sibling::android.widget.TextView[@text='{DESCRIPTION}']";
+
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -30,8 +32,9 @@ public class SearchPageObject extends MainPageObject {
     }
 
     public void typeSearchLine(String search_line){
-        this.waitForElementPresent(SEARCH_INPUT,"Cannot find search input",5);
-        this.waitForElementAndSendKeys(SEARCH_INPUT,"Cannot find and type to search input",search_line,5);
+
+        this.waitForElementPresent(SEARCH_INIT_ELEMENT,"Cannot find search input",10);
+        this.waitForElementAndSendKeys(SEARCH_INIT_ELEMENT,"Cannot find and type to search input",search_line,5);
     }
 
     public void waitForSearchResult(String substring){
@@ -84,6 +87,10 @@ public class SearchPageObject extends MainPageObject {
     }
     public void openLanguageArticlePage(String searchLang){
         this.waitForElementAndClick(getItemFromResultListByTitle(searchLang),
+                "Can't find "+ searchLang +" page",5);
+    }
+    public void waitArticleTitleInResult(String searchLang){
+        this.waitForElementPresent(getItemFromResultListByTitle(searchLang),
                 "Can't find "+ searchLang +" page");
     }
     public String getLangArticleTitle(String searchLang){
@@ -92,6 +99,13 @@ public class SearchPageObject extends MainPageObject {
                 5);
         return titleElement.getAttribute("text");
 
+    }
+    public String getItemFromResultListByTitleDescription(String search_title, String search_description){
+        return ARTICLE_TITLE_DESCRIPTION_RESULT_TPL.replace("{TITLE}",search_title).replace("{DESCRIPTION}",search_description);
+    }
+    public void waitForElementByTitleAndDescription(String search_title, String search_description){
+        this.waitForElementPresent(getItemFromResultListByTitleDescription(search_title,search_description),
+                "Can't find title '"+ search_title +"' or description of article '"+search_description+"' in search results",10);
     }
     public void searchArticle(String searching_word){
         this.initSearchInput();
