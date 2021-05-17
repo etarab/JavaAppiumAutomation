@@ -3,11 +3,11 @@ package lib.ui;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 
-public class NavigationUI extends MainPageObject{
+abstract public class NavigationUI extends MainPageObject{
 
-    private static final String
-            READING_LIST_PAGE_BTN = "xpath://*[@resource-id='org.wikipedia:id/smallLabel'][contains(@text,'Saved')]",
-            ADD_TO_READING_LIST_BTN = "xpath://*[@resource-id='org.wikipedia:id/article_menu_bookmark'][contains(@text,'Save')]";
+    protected static String
+            READING_LIST_PAGE_BTN,
+            ADD_TO_READING_LIST_BTN;
     public NavigationUI(AppiumDriver driver) {
         super(driver);
     }

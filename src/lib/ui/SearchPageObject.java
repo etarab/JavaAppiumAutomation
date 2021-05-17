@@ -1,20 +1,20 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
+import lib.Platform;
 import org.openqa.selenium.WebElement;
 
-public class SearchPageObject extends MainPageObject {
+abstract public class SearchPageObject extends MainPageObject {
 
-    private static final String
-            ONE_OF_MANY_RESULT_TITLE_TPL = "xpath://*[@resource-id = 'org.wikipedia:id/search_results_list']/android.view.ViewGroup[{NUMBER}]//*[@resource-id = 'org.wikipedia:id/page_list_item_title']",
-            SEARCH_RESULT_TITLE = "xpath://*[@resource-id = 'org.wikipedia:id/page_list_item_title']",
-            SEARCH_INIT_ELEMENT = "xpath://*[contains(@text,'Search Wikipedia')]",
-            SEARCH_INPUT = "id:org.wikipedia:id/search_src_text",
-            SEARCH_RESULT_BY_SUBSTRING_TPL = "xpath://*[contains(@text,'{SUBSTRING}]')]",
-            SEARCH_PLACE_HOLDER = "Search Wikipedia",
-            ARTICLE_TITLE_RESULT_TPL = "xpath://*[contains(@text,'{SEARCHLANG} (programming language)')]",
-            ARTICLE_TITLE_DESCRIPTION_RESULT_TPL = "xpath://*[@text = '{TITLE}']/following-sibling::android.widget.TextView[@text='{DESCRIPTION}']";
+    protected static String
+            ONE_OF_MANY_RESULT_TITLE_TPL,
+            SEARCH_RESULT_TITLE,
+            SEARCH_INIT_ELEMENT,
+            SEARCH_INPUT,
+            SEARCH_RESULT_BY_SUBSTRING_TPL,
+            SEARCH_PLACE_HOLDER,
+            ARTICLE_TITLE_RESULT_TPL,
+            ARTICLE_TITLE_DESCRIPTION_RESULT_TPL;
 
 
     public SearchPageObject(AppiumDriver driver) {
@@ -28,7 +28,7 @@ public class SearchPageObject extends MainPageObject {
     public void initSearchInput(){
         this.waitForElementPresent(SEARCH_INIT_ELEMENT,"Cannot search input after click",5);
         this.waitForElementAndClick(SEARCH_INIT_ELEMENT,"Cannot find and click search init element", 5);
-        this.waitForElementPresent(SEARCH_INIT_ELEMENT,"Cannot search input after click",5);
+        this.waitForElementPresent(SEARCH_INIT_ELEMENT,"Cannot search input after click",10);
     }
 
     public void typeSearchLine(String search_line){
@@ -39,7 +39,7 @@ public class SearchPageObject extends MainPageObject {
 
     public void waitForSearchResult(String substring){
         String search_result_xpath = getResultSearchElement(substring);
-        this.waitForElementPresent(search_result_xpath, "Cannot find search result with substring " + substring);
+        this.waitForElementPresent(search_result_xpath, "Cannot find search result with substring " + substring, 5);
     }
     public void clickByArticleWithSubstring(String substring){
         String search_result_xpath = getResultSearchElement(substring);
@@ -47,7 +47,7 @@ public class SearchPageObject extends MainPageObject {
     }
     public void checkSearchFieldText(){
         this.assertElementHasText(SEARCH_INPUT,
-                "Unexpected text. Compare search plate text finished with failed",
+                "Unexpected text. Compare search field text finished with failed",
                 SEARCH_PLACE_HOLDER);
     }
     public void checkMoreThanOneElementsOnResult(){
@@ -97,8 +97,24 @@ public class SearchPageObject extends MainPageObject {
         WebElement titleElement = this.waitForElementPresent(getItemFromResultListByTitle(searchLang),
                 "Cannot find article with "+searchLang+" programming lang",
                 5);
-        return titleElement.getAttribute("text");
-
+        if(Platform.getInstance().isAndroid()) {
+            return titleElement.getAttribute("text");
+        }else {
+            return titleElement.getAttribute("name");
+        }
+    }
+    public String getLangArticleDescription(String searchLang){
+        if(Platform.getInstance().isIOS()) {
+            WebElement titleElement = this.waitForElementPresent(getItemFromResultListByTitle(searchLang) + "/following-sibling::XCUIElementTypeStaticText",
+                    "Cannot find article with " + searchLang + " programming lang",
+                    5);
+            return titleElement.getAttribute("name");
+        }else {
+            WebElement titleElement = this.waitForElementPresent(getItemFromResultListByTitle(searchLang) + "/following-sibling::XCUIElementTypeStaticText",
+                    "Cannot find article with " + searchLang + " programming lang",
+                    5);
+            return titleElement.getAttribute("text");
+        }
     }
     public String getItemFromResultListByTitleDescription(String search_title, String search_description){
         return ARTICLE_TITLE_DESCRIPTION_RESULT_TPL.replace("{TITLE}",search_title).replace("{DESCRIPTION}",search_description);

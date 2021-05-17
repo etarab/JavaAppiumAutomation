@@ -1,14 +1,18 @@
-package tests.IOS;
+package tests;
 
 import lib.CoreTestCase;
-import lib.IOSTestCase;
+import lib.Platform;
 import lib.ui.WelcomePageObject;
+import lib.ui.factories.WelcomePageObjectFactory;
 import org.junit.Test;
 
 public class GetStartedTest extends CoreTestCase {
     @Test
     public void testPassThroughWelcome(){
-        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        if (Platform.getInstance().isAndroid()){
+            return;
+        }
+        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
         WelcomePageObject.waitForPresentFreeEncyclopediaText();
         WelcomePageObject.clickNextBtn();
         WelcomePageObject.waitForPresentNewWaysText();

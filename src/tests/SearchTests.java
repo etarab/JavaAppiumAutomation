@@ -3,17 +3,18 @@ package tests;
 import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
 import lib.ui.WelcomePageObject;
+import lib.ui.factories.SearchPageObjectFactory;
+import lib.ui.factories.WelcomePageObjectFactory;
 import org.junit.Test;
 
 public class SearchTests extends CoreTestCase {
     @Test
     public void testCompareText(){
 
-        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
-        WelcomePageObject.checkAnnotationText();
+        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
         WelcomePageObject.skipFirstScreen();
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.checkSearchFieldText();
     }
@@ -22,9 +23,9 @@ public class SearchTests extends CoreTestCase {
     public void testClearSearch(){
         String searchWord = "Appium";
 
-        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
         WelcomePageObject.skipFirstScreen();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.searchArticle(searchWord);
         SearchPageObject.checkMoreThanOneElementsOnResult();
         SearchPageObject.searchInputClear();
@@ -36,9 +37,9 @@ public class SearchTests extends CoreTestCase {
     public void testCheckSearchResultsTitles(){
         String searchWord = "Java";
 
-        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
         WelcomePageObject.skipFirstScreen();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.searchArticle(searchWord);
         int amount_search_results = SearchPageObject.countSearchResultsOnScreen();
 
@@ -53,9 +54,9 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testSearch(){
         String searchWord = "Java";
-        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
         WelcomePageObject.skipFirstScreen();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchWord);
         SearchPageObject.waitForSearchResult("Java (programming language)");
@@ -63,9 +64,9 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testSearchByTitleAndDescription(){
         String searchWord = "Java";
-        WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
+        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
         WelcomePageObject.skipFirstScreen();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchWord);
         SearchPageObject.waitForElementByTitleAndDescription("Java", "Indonesian island");

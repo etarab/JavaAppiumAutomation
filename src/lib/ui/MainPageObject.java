@@ -4,6 +4,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import lib.Platform;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -29,7 +30,13 @@ public class MainPageObject {
     }
     public void assertElementHasText(String locator, String error_message, String expected_text){
         WebElement title_element = waitForElementPresent(locator, error_message);
-        String title_text = title_element.getAttribute("text");
+        String title_text = "";
+        if(Platform.getInstance().isAndroid()){
+            title_text = title_element.getAttribute("text");
+        } else {
+            title_text = title_element.getAttribute("name");
+            System.out.println(title_text);
+        }
         Assert.assertEquals(error_message,
                 expected_text,
                 title_text);
@@ -106,6 +113,7 @@ public class MainPageObject {
     }
     public void assertElementPresent(String locator){
         By by = this.getLocatorString(locator);
+        waitForElementPresent(locator,"Cannot find title element",5);
         Assert.assertTrue("Cannot find element '"+by.toString()+"' on screen",countElementOnScreen(locator)>0);
     }
     public String waitForElementAndGetAttribute(String locator, String attribute, String error_message, long timeOut){
