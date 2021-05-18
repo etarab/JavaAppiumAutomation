@@ -14,8 +14,7 @@ public class IOSSearchPageObject extends SearchPageObject {
         SEARCH_RESULT_TITLE = "xpath://XCUIElementTypeStaticText";
 
         ARTICLE_TITLE_RESULT_TPL = "xpath://XCUIElementTypeStaticText[contains(@name,'{SEARCHLANG} (programming language)')]";
-//        ARTICLE_DESCRIPTION_RESULT_TPL = "xpath://XCUIElementTypeStaticText[contains(@name,'{SEARCHLANG} (programming language)')]/following-sibling::XCUIElementTypeStaticText";
-        ARTICLE_TITLE_DESCRIPTION_RESULT_TPL = "xpath://*[@text = '{TITLE}']/following-sibling::android.widget.TextView[@text='{DESCRIPTION}']";
+        ARTICLE_TITLE_DESCRIPTION_RESULT_TPL = "xpath://XCUIElementTypeStaticText[contains(@name,'{TITLE}')]/following-sibling::XCUIElementTypeStaticText[contains(@name,'{DESCRIPTION}')]";
 
     }
 
