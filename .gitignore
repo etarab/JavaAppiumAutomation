@@ -2,4 +2,6 @@
 apks/*
 out/*.class
 .idea/*
+.idea/misc.xml
 target/*
+JavaAppiumAutomationHomework.iml
