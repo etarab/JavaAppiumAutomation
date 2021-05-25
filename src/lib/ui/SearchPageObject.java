@@ -3,6 +3,9 @@ package lib.ui;
 import io.appium.java_client.AppiumDriver;
 import lib.Platform;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import java.util.Locale;
 
 abstract public class SearchPageObject extends MainPageObject {
 
@@ -17,7 +20,7 @@ abstract public class SearchPageObject extends MainPageObject {
             ARTICLE_TITLE_DESCRIPTION_RESULT_TPL;
 
 
-    public SearchPageObject(AppiumDriver driver) {
+    public SearchPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -33,8 +36,8 @@ abstract public class SearchPageObject extends MainPageObject {
 
     public void typeSearchLine(String search_line){
 
-        this.waitForElementPresent(SEARCH_INIT_ELEMENT,"Cannot find search input",10);
-        this.waitForElementAndSendKeys(SEARCH_INIT_ELEMENT,"Cannot find and type to search input",search_line,5);
+        this.waitForElementPresent(SEARCH_INPUT,"Cannot find search input",10);
+        this.waitForElementAndSendKeys(SEARCH_INPUT,"Cannot find and type to search input",search_line,5);
     }
 
     public void waitForSearchResult(String substring){
@@ -77,7 +80,12 @@ abstract public class SearchPageObject extends MainPageObject {
     public String getSearchResultTitleString(int number_of_title){
         WebElement title_element = this.waitForElementPresent(getItemFromResultList(number_of_title),
                 "Can't find title element for compare strings",10);
-        return title_element.getAttribute("text");
+
+        if(!Platform.getInstance().isMW()){
+            return title_element.getAttribute("text");
+        } else {
+            return title_element.getText().toLowerCase(Locale.ROOT);
+        }
     }
     public String getSearchResultTitleString(){
         return getSearchResultTitleString(1);
@@ -127,5 +135,4 @@ abstract public class SearchPageObject extends MainPageObject {
         this.initSearchInput();
         this.typeSearchLine(searching_word);
     }
-
 }

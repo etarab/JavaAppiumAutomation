@@ -2,6 +2,7 @@ package lib.ui.IOS;
 
 import io.appium.java_client.AppiumDriver;
 import lib.ui.MyListsPageObject;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class IOSMyListPageObject extends MyListsPageObject {
     static {
@@ -12,7 +13,7 @@ public class IOSMyListPageObject extends MyListsPageObject {
         ARTICLE_TITLE_ON_RL = "xpath://*[contains(@name,'{TITLE}')]";
         DEFAULT_READING_LIST = "xpath://*[@resource-id='org.wikipedia:id/item_title'][contains(@text,'Saved')]";
     }
-    public IOSMyListPageObject(AppiumDriver driver) {
+    public IOSMyListPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 }

@@ -2,6 +2,7 @@ package lib.ui.Android;
 
 import io.appium.java_client.AppiumDriver;
 import lib.ui.ArticlePageObject;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class AndroidArticlePageObject extends ArticlePageObject {
 
@@ -11,7 +12,7 @@ public class AndroidArticlePageObject extends ArticlePageObject {
                 ARTICLE_TITLE = "xpath://*[@resource-id='pcs']/android.view.View[1]/android.view.View[1]";
     }
 
-    public AndroidArticlePageObject(AppiumDriver driver) {
+    public AndroidArticlePageObject(RemoteWebDriver driver) {
         super(driver);
     }
 }

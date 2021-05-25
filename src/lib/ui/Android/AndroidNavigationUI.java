@@ -2,6 +2,7 @@ package lib.ui.Android;
 
 import io.appium.java_client.AppiumDriver;
 import lib.ui.NavigationUI;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class AndroidNavigationUI extends NavigationUI {
     static {
@@ -9,7 +10,7 @@ public class AndroidNavigationUI extends NavigationUI {
         ADD_TO_READING_LIST_BTN = "xpath://*[@resource-id='org.wikipedia:id/article_menu_bookmark'][contains(@text,'Save')]";
     }
 
-    public AndroidNavigationUI(AppiumDriver driver) {
+    public AndroidNavigationUI(RemoteWebDriver driver) {
         super(driver);
     }
 }

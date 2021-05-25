@@ -1,6 +1,7 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 
 abstract public class WelcomePageObject extends MainPageObject{
@@ -18,7 +19,7 @@ abstract public class WelcomePageObject extends MainPageObject{
             SKIP_BTN;
 
 
-    public WelcomePageObject(AppiumDriver driver) {
+    public WelcomePageObject(RemoteWebDriver driver) {
         super(driver);
     }
     public void skipFirstScreen(){
