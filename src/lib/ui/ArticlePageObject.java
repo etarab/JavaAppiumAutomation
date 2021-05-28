@@ -1,16 +1,15 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
 import lib.Platform;
-import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 abstract public class ArticlePageObject extends MainPageObject{
 
     protected static String
-        OPTIONS_BTN,
+        MENU_BTN,
         EXPLORE_BTN,
-        ARTICLE_TITLE;
+        ARTICLE_TITLE,
+        FOOTER_BTN;
 
     public ArticlePageObject(RemoteWebDriver driver) {
         super(driver);
@@ -18,10 +17,10 @@ abstract public class ArticlePageObject extends MainPageObject{
 
     public void returnToMainPage(){
         if (Platform.getInstance().isAndroid()) {
-            this.waitForElementPresent(OPTIONS_BTN,
+            this.waitForElementPresent(MENU_BTN,
                     "Can't find three dots",
                     10);
-            this.waitForElementAndClick(OPTIONS_BTN,
+            this.waitForElementAndClick(MENU_BTN,
                     "Can't find three dots");
         }
         this.waitForElementAndClick(EXPLORE_BTN,
@@ -42,5 +41,8 @@ abstract public class ArticlePageObject extends MainPageObject{
     }
     public void swipePageDown(int timeOfSwipe){
         this.swipeScreenUp(timeOfSwipe);
+    }
+    public void swipeToFooter(){
+        this.swipeToFindElement(FOOTER_BTN, "Cannot find footer");
     }
 }

@@ -44,10 +44,7 @@ abstract public class SearchPageObject extends MainPageObject {
         String search_result_xpath = getResultSearchElement(substring);
         this.waitForElementPresent(search_result_xpath, "Cannot find search result with substring " + substring, 5);
     }
-    public void clickByArticleWithSubstring(String substring){
-        String search_result_xpath = getResultSearchElement(substring);
-        this.waitForElementAndClick(search_result_xpath, "Cannot find and click search result with substring " + substring,10);
-    }
+
     public void checkSearchFieldText(){
         this.assertElementHasText(SEARCH_INPUT,
                 "Unexpected text. Compare search field text finished with failed",
@@ -87,9 +84,7 @@ abstract public class SearchPageObject extends MainPageObject {
             return title_element.getText().toLowerCase(Locale.ROOT);
         }
     }
-    public String getSearchResultTitleString(){
-        return getSearchResultTitleString(1);
-    }
+
     public String getItemFromResultListByTitle(String searchLang){
         return ARTICLE_TITLE_RESULT_TPL.replace("{SEARCHLANG}",searchLang);
     }
@@ -97,18 +92,17 @@ abstract public class SearchPageObject extends MainPageObject {
         this.waitForElementAndClick(getItemFromResultListByTitle(searchLang),
                 "Can't find "+ searchLang +" page",5);
     }
-    public void waitArticleTitleInResult(String searchLang){
-        this.waitForElementPresent(getItemFromResultListByTitle(searchLang),
-                "Can't find "+ searchLang +" page");
-    }
+
     public String getLangArticleTitle(String searchLang){
         WebElement titleElement = this.waitForElementPresent(getItemFromResultListByTitle(searchLang),
                 "Cannot find article with "+searchLang+" programming lang",
                 5);
         if(Platform.getInstance().isAndroid()) {
             return titleElement.getAttribute("text");
-        }else {
+        }else if(Platform.getInstance().isIOS()) {
             return titleElement.getAttribute("name");
+        } else {
+            return titleElement.getAttribute("title");
         }
     }
     public String getLangArticleDescription(String searchLang){
@@ -117,11 +111,16 @@ abstract public class SearchPageObject extends MainPageObject {
                     "Cannot find article with " + searchLang + " programming lang",
                     5);
             return titleElement.getAttribute("name");
-        }else {
+        }else if(Platform.getInstance().isAndroid()) {
             WebElement titleElement = this.waitForElementPresent(getItemFromResultListByTitle(searchLang) + "/following-sibling::XCUIElementTypeStaticText",
                     "Cannot find article with " + searchLang + " programming lang",
                     5);
             return titleElement.getAttribute("text");
+        } else {
+            WebElement titleElement = this.waitForElementPresent(getItemFromResultListByTitle(searchLang) + "/a/div[@class = 'wikidata-description']",
+                    "Cannot find article with " + searchLang + " programming lang",
+                    5);
+            return titleElement.getText();
         }
     }
     public String getItemFromResultListByTitleDescription(String search_title, String search_description){

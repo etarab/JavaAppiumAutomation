@@ -1,12 +1,10 @@
 package lib.ui.factories;
 
-import io.appium.java_client.AppiumDriver;
 import lib.Platform;
 import lib.ui.Android.AndroidSearchPageObject;
 import lib.ui.IOS.IOSSearchPageObject;
 import lib.ui.SearchPageObject;
 import lib.ui.mobile_web.MWSearchPageObject;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class SearchPageObjectFactory {

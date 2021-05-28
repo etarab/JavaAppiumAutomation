@@ -1,6 +1,7 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.ArticlePageObject;
 import lib.ui.SearchPageObject;
 import lib.ui.WelcomePageObject;
@@ -12,18 +13,26 @@ import org.junit.Test;
 public class ArticleTests extends CoreTestCase {
 
     @Test
-    public void testCheckSwipeAction(){
+    public void testCheckSwipeAction() throws InterruptedException {
 
         String searchWord = "Java";
 
-        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
-        WelcomePageObject.skipFirstScreen();
+        if(!Platform.getInstance().isMW()){
+            WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
+            WelcomePageObject.skipFirstScreen();
+        }
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.searchArticle(searchWord);
         SearchPageObject.openLanguageArticlePage(searchWord);
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
-        ArticlePageObject.swipePageDown(2000);
-        ArticlePageObject.swipePageDown(2000);
+
+        if (Platform.getInstance().isMW()){
+            ArticlePageObject.scrollWebPage();
+            ArticlePageObject.scrollWebPage();
+
+        } else {
+            ArticlePageObject.swipeToFooter();
+        }
     }
 
 
@@ -31,8 +40,10 @@ public class ArticleTests extends CoreTestCase {
     public void testCheckArticleTitleExist(){
         String searchWord = "Java";
 
-        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
-        WelcomePageObject.skipFirstScreen();
+        if(!Platform.getInstance().isMW()){
+            WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
+            WelcomePageObject.skipFirstScreen();
+        }
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.searchArticle(searchWord);
         SearchPageObject.openLanguageArticlePage(searchWord);

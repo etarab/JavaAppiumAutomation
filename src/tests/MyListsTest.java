@@ -8,52 +8,77 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class MyListsTest extends CoreTestCase {
-    @Test
-    public void testAddAndDeleteItemsToReadingList(){
 
-        String[] searchLang = new String[]{"Java","Python"};
-        String[] articleTitle = new String[searchLang.length];
-        String[] article_card_text = new String[searchLang.length];
-        int deletingElement = 1;
+	@Test
+	public void testAddAndDeleteItemsToReadingList() throws InterruptedException {
 
-        WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
-        WelcomePageObject.skipFirstScreen();
-        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+		String[] searchLang = new String[]{"Java","Python"};
+		String[] articleTitle = new String[searchLang.length];
+		String[] article_card_text = new String[searchLang.length];
+		int deletingElement = 1;
 
-        for (int i = 0; i < searchLang.length; i++) {
+		if(!Platform.getInstance().isMW()){
+			WelcomePageObject WelcomePageObject = WelcomePageObjectFactory.get(driver);
+			WelcomePageObject.skipFirstScreen();
+		}
+		AuthorizationPageObject Auth = AuthorizationPageObjectFactory.get(driver);
+		NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+		NavigationUI.goToAuthFromMainMenu();
+		Auth.authToWiki("etrabukhin","etarab18");
 
-            SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-            SearchPageObject.searchArticle(searchLang[i]);
-            articleTitle[i] = SearchPageObject.getLangArticleTitle(searchLang[i]);
-            article_card_text[i] = articleTitle[i] + " " + SearchPageObject.getLangArticleDescription(searchLang[i]);
-            SearchPageObject.openLanguageArticlePage(searchLang[i]);
-            NavigationUI.addingToReadingList();
-        }
+		for (int i = 0; i < searchLang.length; i++) {
 
-        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
-        ArticlePageObject.returnToMainPage();
-        NavigationUI.goToSavedArticlesPageFromStartScreen();
-        MyListsPageObject MyListsPageObject = MyListPageObjectFactory.get(driver);
+			SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
+			SearchPageObject.searchArticle(searchLang[i]);
+			articleTitle[i] = SearchPageObject.getLangArticleTitle(searchLang[i]);
+			article_card_text[i] = articleTitle[i] + " " + SearchPageObject.getLangArticleDescription(searchLang[i]);
+			SearchPageObject.openLanguageArticlePage(searchLang[i]);
+			NavigationUI.deletingArticleFromRL();
+			NavigationUI.addingToReadingList();
+		}
 
-        if(Platform.getInstance().isAndroid()){
-            MyListsPageObject.goToDefaultReadingList();
-        } else {
-            MyListsPageObject.closeRLSyncPopup();
-        }
+		if(!Platform.getInstance().isMW()){
+			ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
+			ArticlePageObject.returnToMainPage();
+		} else {
+			NavigationUI.openMainMenuOnMW();
+		}
+		NavigationUI.goToSavedArticlesPage();
+		MyListsPageObject MyListsPageObject = MyListPageObjectFactory.get(driver);
 
-        MyListsPageObject.deleteElementFromReadingList(articleTitle[deletingElement]);
+		if(Platform.getInstance().isAndroid()){
+			MyListsPageObject.goToDefaultReadingList();
+		} else if(Platform.getInstance().isIOS()){
+			MyListsPageObject.closeRLSyncPopup();
+		}
 
-        for (int i = 0; i < MyListsPageObject.countSearchResultsOnScreen(searchLang[searchLang.length - (deletingElement + 1)]); i++) {
+		MyListsPageObject.deleteElementFromReadingList(articleTitle[deletingElement]);
+		if(Platform.getInstance().isMW()){
+			driver.navigate().refresh();
+		}
 
-            String full_description = "";
-            full_description = MyListsPageObject.getArticleTitleString(i+1) + " " + MyListsPageObject.getLangArticleDescription(i+1);
-            if (i != deletingElement){
-                assertEquals(article_card_text[i],full_description);
-            }else{
-                Assert.assertNotEquals(articleTitle[i] + " was delete",
-                        full_description,
-                        article_card_text[i]);
+		for (int i = 0; i < MyListsPageObject.countSearchResultsOnScreen(searchLang[searchLang.length - (deletingElement + 1)]); i++) {
+
+			if(!Platform.getInstance().isMW()){
+				String full_description = "";
+				full_description = MyListsPageObject.getArticleTitleString(i + 1) + " " + MyListsPageObject.getLangArticleDescription(i + 1);
+
+				 if (i != deletingElement){
+					assertEquals(article_card_text[i],full_description);
+				 }else{
+					 Assert.assertNotEquals(articleTitle[i] + " was delete",
+						full_description,
+						article_card_text[i]);
+				 }
+			} else {
+                if (i != deletingElement){
+                    assertEquals(articleTitle[i],MyListsPageObject.getArticleTitleString(i + 1));
+                }else{
+                    Assert.assertNotEquals(articleTitle[i] + " was delete",
+                            MyListsPageObject.getArticleTitleString(i + 1),
+                            articleTitle[i]);
+                }
             }
-        }
-    }
+		}
+	}
 }

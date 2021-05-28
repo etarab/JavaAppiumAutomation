@@ -1,8 +1,6 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
 import lib.Platform;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -13,7 +11,8 @@ abstract public class MyListsPageObject extends MainPageObject{
             ARTICLE_TITLE_ON_RL,
             DEFAULT_READING_LIST,
             DELETE_FROM_RL_BTN,
-            CLOSE_SYNC_POPUP;
+            CLOSE_SYNC_POPUP,
+            DELETE_FROM_RL_TPL;
 
     public MyListsPageObject(RemoteWebDriver driver) {
         super(driver);
@@ -30,22 +29,33 @@ abstract public class MyListsPageObject extends MainPageObject{
         return ARTICLE_TITLE_ON_RL.replace("{TITLE}",articleTitle);
     }
     public void deleteElementFromReadingList(String articleTitle){
-        this.waitForElementPresent(getArticleTitleElement(articleTitle),
-                "Can't find some element for delete",
-                20);
-        this.swipeElementLeft(getArticleTitleElement(articleTitle),
-                "Can't find some element for delete",
-                1000);
-        if (Platform.getInstance().isIOS()){
-            waitForElementAndClick(DELETE_FROM_RL_BTN,"Cannot find delete article from reading list",5);
+        if(!Platform.getInstance().isMW()){
+            this.swipeElementLeft(getArticleTitleElement(articleTitle),
+                    "Can't find some element for delete",
+                    1000);
+            if (Platform.getInstance().isIOS()){
+                this.waitForElementAndClick(DELETE_FROM_RL_BTN,
+                        "Cannot find delete article from reading list",
+                        5);
+            }
+        } else {
+            this.waitForElementPresent(getDeletingElementFromRL(articleTitle),
+                    "Cannot find button 'delete article from reading list'",
+                    5);
+            this.waitForElementAndClick(getDeletingElementFromRL(articleTitle),
+                    "Cannot delete article from reading list");
         }
+    }
+    private String getDeletingElementFromRL(String articleTitle){
+        return DELETE_FROM_RL_TPL.replace("{TITLE}",articleTitle);
     }
     private String getTitleOnReadingList(String searchlang){
         return ARTICLE_TITLE_ITEM.replace("{SEARCHLANG}",searchlang);
     }
     public int countSearchResultsOnScreen(String searchlang){
         this.waitForElementPresent(getTitleOnReadingList(searchlang),
-                "Can't find some search results",10);
+                "Can't find some search results",
+                10);
         return this.countElementOnScreen(getTitleOnReadingList(searchlang));
     }
     private String getTitleItemFromList(int number_of_title){
@@ -54,11 +64,14 @@ abstract public class MyListsPageObject extends MainPageObject{
     }
     public String getArticleTitleString(int number_of_title){
         WebElement title_element = this.waitForElementPresent(getTitleItemFromList(number_of_title),
-                "Can't find title element for compare strings",10);
+                "Can't find title element for compare strings",
+                10);
         if(Platform.getInstance().isAndroid()) {
             return title_element.getAttribute("text");
-        } else {
+        } else if (Platform.getInstance().isIOS()){
             return title_element.getAttribute("name");
+        } else {
+            return title_element.getAttribute("title");
         }
     }
 
@@ -77,7 +90,9 @@ abstract public class MyListsPageObject extends MainPageObject{
     }
 
     public void closeRLSyncPopup(){
-        waitForElementAndClick(CLOSE_SYNC_POPUP,"PopUp was not show on screen",5);
+        waitForElementAndClick(CLOSE_SYNC_POPUP,
+                "PopUp was not show on screen",
+                5);
     }
 
 

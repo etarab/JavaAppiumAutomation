@@ -8,12 +8,13 @@ import lib.Platform;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration; 
+import java.time.Duration;
 import java.util.regex.Pattern;
 
 public class MainPageObject {
@@ -36,42 +37,37 @@ public class MainPageObject {
             title_text = title_element.getAttribute("text");
         } else if (Platform.getInstance().isIOS()){
             title_text = title_element.getAttribute("name");
-            System.out.println(title_text);
         } else {
             title_text = title_element.getAttribute("placeholder");
-            System.out.println(title_text);
         }
         Assert.assertEquals(error_message,
                 expected_text,
                 title_text);
-    };
-    public void waitForElementAndClear(String locator, String error_message, long timeOut){
-        WebElement element = waitForElementPresent(locator, error_message, timeOut);
-        element.clear();
-    };
+    }
+
     public void waitForElementAndClear(String locator, String error_message){
         WebElement element = waitForElementPresent(locator, error_message);
         element.clear();
-    };
+    }
     public void waitForElementAndSendKeys(String locator, String error_message, String value, long timeOut){
         WebElement element = waitForElementPresent(locator, error_message, timeOut);
         element.sendKeys(value);
-    };
+    }
     public void waitForElementAndSendKeys(String locator, String error_message, String value){
         WebElement element = waitForElementPresent(locator, error_message);
         element.sendKeys(value);
-    };
+    }
     public void waitForElementAndClick(String locator, String error_message){
         WebElement element = waitForElementPresent(locator, error_message);
         element.click();
-    };
+    }
     public void waitForElementAndClick(String locator, String error_message,long timeOut){
         WebElement element = waitForElementPresent(locator, error_message,timeOut);
         element.click();
-    };
+    }
     public WebElement waitForElementPresent(String locator, String error_message){
         return waitForElementPresent(locator, error_message, 5);
-    };
+    }
     public WebElement waitForElementPresent(String locator, String error_message, long timeoutInSeconds ){
         By by = this.getLocatorString(locator);
         WebDriverWait wait = new WebDriverWait(driver,timeoutInSeconds);
@@ -81,7 +77,7 @@ public class MainPageObject {
                 ExpectedConditions.presenceOfElementLocated(by)
         );
     }
-    public void swipeScreenUp(int timeOfSwipe){
+    protected void swipeScreenUp(int timeOfSwipe){
 
         if(driver instanceof AppiumDriver){
             TouchAction action = new TouchAction((AppiumDriver)driver);
@@ -99,6 +95,20 @@ public class MainPageObject {
             System.out.println("Method swipeScreenUp() does nothing for platform " + Platform.getInstance().getPlatformVar());
         }
 
+    }
+    public boolean isElementPresent(String locator){
+        return countElementOnScreen(locator) > 0;
+    }
+    protected void swipeUpQuick(){
+        swipeScreenUp(200);
+    }
+        protected void swipeToFindElement(String locator, String error_message){
+        By by = this.getLocatorString(locator);
+        driver.findElements(by);
+        driver.findElements(by).size();
+        while (driver.findElements(by).size() == 0){
+            swipeUpQuick();
+        }
     }
     public void swipeElementLeft(String locator, String error_message, int timeOfSwipe){
 
@@ -119,6 +129,14 @@ public class MainPageObject {
                     .perform();
         } else {
             System.out.println("Method swipeElementLeft() does nothing for platform " + Platform.getInstance().getPlatformVar());
+        }
+    }
+    public void scrollWebPage(){
+        if(Platform.getInstance().isMW()){
+            JavascriptExecutor JSExecutor = (JavascriptExecutor) driver;
+            JSExecutor.executeScript("window.scrollBy(0,250)");
+        } else {
+            System.out.println("Method scrollWebPage() does nothing for platform " + Platform.getInstance().getPlatformVar());
         }
     }
     public int countElementOnScreen(String locator){
@@ -149,6 +167,23 @@ public class MainPageObject {
             return By.cssSelector(locator);
         } else {
             throw new IllegalArgumentException("Cannot get type or locator: " + locator_with_type);
+        }
+    }
+
+    public void tryClickElementwithFewAttempts(String locator, String error_message, int amount_of_attempts){
+        int current_attempts = 0;
+        boolean need_more_attempts = true;
+
+        while (need_more_attempts){
+            try {
+                waitForElementAndClick(locator, error_message,2);
+                need_more_attempts = false;
+            } catch (Exception e){
+                if(current_attempts > amount_of_attempts){
+                    waitForElementAndClick(locator,error_message,2);
+                }
+            }
+            ++ current_attempts;
         }
     }
 }

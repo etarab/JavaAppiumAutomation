@@ -15,7 +15,7 @@ public class MWSearchPageObject extends SearchPageObject {
         SEARCH_RESULT_BY_SUBSTRING_TPL = "xpath://h3[contains(text(),'{SUBSTRING}')]";
         ARTICLE_TITLE_DESCRIPTION_RESULT_TPL = "xpath://li[@title='{TITLE}']/a/div[text()='{DESCRIPTION}']";
 
-        ARTICLE_TITLE_RESULT_TPL = "xpath://*[contains(@text,'{SEARCHLANG} (programming language)')]";
+        ARTICLE_TITLE_RESULT_TPL = "xpath://li[@title='{SEARCHLANG} (programming language)']";
 
     }
 
